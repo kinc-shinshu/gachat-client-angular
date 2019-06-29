@@ -1,1 +1,6 @@
-<p>chat works!</p>
+<div class="chatbox">
+  <div class="chatbox--chat" *ngFor="let chat of chats">
+    <h3>{{ chat.name }}</h3>
+    <p>{{ chat.body }}</p>
+  </div>
+</div>
