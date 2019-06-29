@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { ChatComponent } from './chat/chat.component';
 
@@ -8,7 +9,8 @@ import { ChatComponent } from './chat/chat.component';
     ChatComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [ChatComponent]

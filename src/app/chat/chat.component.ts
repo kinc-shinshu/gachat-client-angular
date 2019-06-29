@@ -9,6 +9,7 @@ import { chats }  from './chat_mock';
 })
 export class ChatComponent implements OnInit {
   chats = [];
+  model = { name: '', body: '' };
 
   constructor() { }
 
@@ -16,9 +17,24 @@ export class ChatComponent implements OnInit {
     this.fetchChat();
   }
 
-  // rewrite REAL fetching
-  private fetchChat() {
+  onSubmit() {
+    this.chats = [ ...this.chats, this.model ];
+    this.model = { ...this.model, body: '' };
+  }
+
+  isFetching() {
+    return this.chats.length === 0;
+  }
+
+  // TODO: rewrite REAL fetching
+  private async fetchChat() {
+    await this.sleep(1000);
     this.chats = chats;
   }
 
+  private sleep(msec : number) {
+  return new Promise(function(resolve) {
+    setTimeout(function() {resolve()}, msec);
+  })
+}
 }

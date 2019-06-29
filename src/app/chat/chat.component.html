@@ -1,6 +1,32 @@
+<h1>Gachat</h1>
+
 <div class="chatbox">
-  <div class="chatbox--chat" *ngFor="let chat of chats">
-    <h3>{{ chat.name }}</h3>
+  <div class="chatbox--loading" *ngIf="isFetching(); else chatBlock">
+    読み込み中...
+  </div>
+  <div class="chatbox--chat" *ngFor="let chat of chats" #chatBlock>
+    <h3>{{ chat.name }} さん</h3>
     <p>{{ chat.body }}</p>
   </div>
+</div>
+
+<div class="formbox">
+  <h2>入力フォーム!</h2>
+  <form class="formbox--form" #chatForm="ngForm" (ngSubmit)="onSubmit()">
+    <div class="formbox--form__group">
+      <label for="name">名前 : </label>
+      <input type="text" class="formbox--form__control" id="name"
+             required
+             [(ngModel)]="model.name" name="name">
+    </div>
+
+    <div class="formbox--form__group">
+      <label for="body">内容 : </label>
+      <input type="text" class="formbox--form__control" id="body"
+             required
+             [(ngModel)]="model.body" name="body">
+    </div>
+
+    <button type="submit" [disabled]="!chatForm.form.valid">送信</button>
+  </form>
 </div>
