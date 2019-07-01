@@ -1,6 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+// import { Apollo } from 'apollo-angular';
+// import gql from 'graphql-tag';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { chats }  from './chat_mock';
+type APIResponse = {
+  data: {
+    allChats: Array<Chat>
+  }
+}
+
+type Chat = {
+  name: string
+  body: string
+}
 
 @Component({
   selector: 'app-chat',
@@ -9,32 +21,52 @@ import { chats }  from './chat_mock';
 })
 export class ChatComponent implements OnInit {
   chats = [];
+  loading = false;
   model = { name: '', body: '' };
+  ENDPOINT = 'https://gachat-api.herokuapp.com/graphql';
 
-  constructor() { }
+  constructor(private http: HttpClient) {
+  }
 
   ngOnInit() {
-    this.fetchChat();
+    this.fetchAllChats();
+  }
+
+  isFetching() {
+    return this.loading;
+  }
+
+  private fetchAllChats() {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    this.loading = true;
+    this.http
+      .post<APIResponse>(this.ENDPOINT, {
+        query: '{ allChats { name body } }'
+      }, { headers })
+      .subscribe(
+        response => this.setChats(response.data.allChats)
+      )
+    this.loading = false;
+  }
+
+  private setChats(chats: Array<Chat>) {
+    this.chats = [ ...this.chats, ...chats ];
   }
 
   onSubmit() {
+    this.createChat(this.model);
     this.chats = [ ...this.chats, this.model ];
     this.model = { ...this.model, body: '' };
   }
 
-  isFetching() {
-    return this.chats.length === 0;
+  private createChat(chat: Chat) {
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    this.http
+      .post<Object>(this.ENDPOINT, {
+        query: `mutation { createChat(name: "${chat.name}", body: "${chat.body}") { name body } }`
+      }, { headers })
+      .subscribe(
+        response => console.log(response)
+      )
   }
-
-  // TODO: rewrite REAL fetching
-  private async fetchChat() {
-    await this.sleep(1000);
-    this.chats = chats;
-  }
-
-  private sleep(msec : number) {
-  return new Promise(function(resolve) {
-    setTimeout(function() {resolve()}, msec);
-  })
-}
 }
